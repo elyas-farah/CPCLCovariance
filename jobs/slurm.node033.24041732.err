@@ -1,0 +1,39 @@
+
+The following have been reloaded with a version change:
+  1) GCCcore/12.2.0 => GCCcore/12.3.0
+
+Traceback (most recent call last):
+  File "/home/s59efara_hpc/covariance/varied_n_sources.py", line 111, in <module>
+    result1 = list(excuter.map(g1, n_sources_list))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/software/easybuild-INTEL/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/software/easybuild-INTEL/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/software/easybuild-INTEL/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/software/easybuild-INTEL/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/opt/software/easybuild-INTEL/software/Python/3.11.3-GCCcore-12.3.0/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/s59efara_hpc/covariance/varied_n_sources.py", line 103, in g1
+    return f1(0, 0, n_sources_list, 0,0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/s59efara_hpc/covariance/varied_n_sources.py", line 61, in f1
+    leff_fixed_auto, cl_mean_rnd_fixed_auto, cl_prediction_fixed_auto, covmat_fixed_auto, analytic_cov_fixed_auto, field_variance_cov_fixed_auto, Nf_list, Nf_var, cls_auto  = generate_mocks(spin=spin, spin2=spin2, cat_sizes=cat_size,
+                                                                                                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/s59efara_hpc/covariance/utils2.py", line 452, in generate_mocks
+    w = nmt.NmtWorkspace.from_fields(fld, fld, b)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/s59efara_hpc/.local/lib/python3.11/site-packages/pymaster/workspaces.py", line 119, in from_fields
+    return cls(fl1=fl1, fl2=fl2, bins=bins, is_teb=is_teb,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/s59efara_hpc/.local/lib/python3.11/site-packages/pymaster/workspaces.py", line 76, in __init__
+    self.compute_coupling_matrix(
+  File "/home/s59efara_hpc/.local/lib/python3.11/site-packages/pymaster/workspaces.py", line 242, in compute_coupling_matrix
+    raise ValueError(f"Maximum multipoles in bins ({bins.lmax}) "
+ValueError: Maximum multipoles in bins (766) and fields (767) are not the same.

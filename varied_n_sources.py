@@ -40,7 +40,8 @@ nside = 256
 nell = 20
 lmin = 1
 
-edges = np.arange(lmin, 3*nside + 1)
+edges = np.unique(np.geomspace(lmin,3*nside - 1,nell).astype(int))
+
 
 # cls_prediction_list = []
 # cls_fixed_field_list = []
@@ -59,7 +60,7 @@ result2_list = []
 def f1(i, j, cat_size, spin, spin2):
     leff_fixed_auto, cl_mean_rnd_fixed_auto, cl_prediction_fixed_auto, covmat_fixed_auto, analytic_cov_fixed_auto, field_variance_cov_fixed_auto, Nf_list, Nf_var, cls_auto  = generate_mocks(spin=spin, spin2=spin2, cat_sizes=cat_size,
                                                                              mode="fixed",
-                                                                             nsims=50,
+                                                                             nsims=100,
                                                                              nell=nell,
                                                                              lmin = lmin,
                                                                              i_tomo=i,
@@ -69,13 +70,12 @@ def f1(i, j, cat_size, spin, spin2):
                                                                              ell_extern=ell_extern,
                                                                              sel=sel,
                                                                              edges = edges)
-    print(Nf_list)
     return [leff_fixed_auto, cl_mean_rnd_fixed_auto[0], np.diag(covmat_fixed_auto[0]), Nf_list, Nf_var]
 
 def f2(i, j, cat_size, spin, spin2):
     leff_fixed_auto, cl_mean_rnd_fixed_auto, cl_prediction_fixed_auto, covmat_fixed_auto, analytic_cov_fixed_auto, field_variance_cov_fixed_auto,Nf_list, Nf_var, cls_auto  = generate_mocks(spin=spin, spin2=spin2, cat_sizes=cat_size,
                                                                              mode="field_variance",
-                                                                             nsims=50,
+                                                                             nsims=100,
                                                                              nell=nell,
                                                                              lmin = lmin,
                                                                              i_tomo=i,
@@ -85,7 +85,6 @@ def f2(i, j, cat_size, spin, spin2):
                                                                              ell_extern=ell_extern,
                                                                              sel=sel,
                                                                              edges = edges)
-    print(Nf_list)
     return [leff_fixed_auto, cl_mean_rnd_fixed_auto[0], np.diag(covmat_fixed_auto[0]), Nf_list, Nf_var]
 
 
@@ -121,5 +120,5 @@ end = time.time()
 print(end - begin)
 
 
-np.save('/home/s59efara_hpc/covariance/data_sets/varied_numbers_compare_fixed_field.npy', result1_list)
-np.save('/home/s59efara_hpc/covariance/data_sets/varied_numbers_compare_field_variance.npy', result2_list)
+np.save('/home/s59efara_hpc/covariance/data_sets/varied_numbers_compare_fixed_field_wide_bins.npy', result1_list)
+np.save('/home/s59efara_hpc/covariance/data_sets/varied_numbers_compare_field_variance_wide_bins.npy', result2_list)
