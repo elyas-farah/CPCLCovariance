@@ -263,6 +263,7 @@ def generate_mocks(cat_sizes,
                 nsources_1 = nsources
                 nsources_2 = nsources
             if mode=="fixed":
+                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
                 pos_data_1, nsrc_1 = get_pos(nsources_1, mode, sel)
                 pos_data_2, nsrc_2 = get_pos(nsources_2, mode, sel)
                 mp_1, mp_2 = gen_sim(spin=spin, spin2=spin2, cl_true=cl_true_1,cl_true_2=cl_true_2, cl_true_12 = cl_true_12, nside=nside, lmax_nside = lmax_nside)
@@ -276,11 +277,11 @@ def generate_mocks(cat_sizes,
                 fval_1 = mp_1[:, ipix_1]
                 
                 fval_2 = mp_2[:, ipix_2]
-                fld_1 = nmt.NmtFieldCatalog(pos_data_1, w_data_1, fval_1, lmax=lmax_nside, lonlat=True)
-                fld_2 = nmt.NmtFieldCatalog(pos_data_2, w_data_2, fval_2, lmax=lmax_nside, lonlat=True)
+                fld_1 = nmt.NmtFieldCatalog(pos_data_1, w_data_1, fval_1, lmax=b.lmax, lonlat=True)
+                fld_2 = nmt.NmtFieldCatalog(pos_data_2, w_data_2, fval_2, lmax=b.lmax, lonlat=True)
                 
                 # edges = np.geomspace(lmin,3*nside,nell).astype(int)                
-                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
+                
 
                 leff = b.get_effective_ells()
                 cls = []
@@ -429,6 +430,7 @@ def generate_mocks(cat_sizes,
         for nsources in cat_sizes:
             if mode=="fixed":
                 pos_data, nsrc = get_pos(nsources, mode, sel)
+                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
                     
                 # print(f"The catalog has {nsrc} sources.")
                 mp = gen_sim(spin = spin, cl_true=cl_true,nside=nside, lmax_nside = lmax_nside)
@@ -443,21 +445,22 @@ def generate_mocks(cat_sizes,
                 # print(type(ipix), ipix, mp.shape)
                 fval = mp[:, ipix]
 
-                fld = nmt.NmtFieldCatalog(pos_data, w_data, fval, lmax=lmax_nside, lonlat=True)
+                fld = nmt.NmtFieldCatalog(pos_data, w_data, fval, lmax=b.lmax, lonlat=True)
                 
                 # edges = np.unique(np.geomspace(lmin,3*nside,nell).astype(int))
-                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
                 
                 cls = []
                 w = nmt.NmtWorkspace.from_fields(fld, fld, b)
                 for i in range(nsims):
-                    fld = gen_fixed_field(spin=spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=lmax,
-                                            cl_true=cl_true,nside=nside, lmax_nside = lmax_nside)
+                    fld = gen_fixed_field(spin=spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=b.lmax,
+                                            cl_true=cl_true,nside=nside, lmax_nside = b.lmax)
                     cls.append(w.decouple_cell(nmt.compute_coupled_cell(fld, fld)))
                     Nf_list.append(fld.Nf)
                     
                 cls = np.array(cls)
             if mode=="random":
+                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
+                
                 pos_data, nsrc = get_pos(nsources, mode, sel)
                 cls = []
                 # Catalog weights
@@ -469,17 +472,16 @@ def generate_mocks(cat_sizes,
                 ipix = hp.ang2pix(nside, pos_data[0], pos_data[1], lonlat=True)
                 # Assign field values from sky positions
                 fval = mp[:, ipix]
-                fld = nmt.NmtFieldCatalog(pos_data, w_data, fval, lmax=lmax_nside, lonlat=True)
+                fld = nmt.NmtFieldCatalog(pos_data, w_data, fval, lmax=b.lmax, lonlat=True)
                 
                 # edges = np.unique(np.geomspace(lmin,3*nside,nell).astype(int))
-                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
                 cls = []
                 for i in range(nsims):
                     pos_data, nsrc = get_pos(nsources, mode, sel)
                     ipix = hp.ang2pix(nside, pos_data[0], pos_data[1], lonlat=True)    
                     
-                    fld = gen_fixed_field(spin=spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=lmax,
-                                            cl_true=cl_true,nside=nside, lmax_nside = lmax_nside)
+                    fld = gen_fixed_field(spin=spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=b.lmax,
+                                            cl_true=cl_true,nside=nside, lmax_nside = b.lmax)
                     w = nmt.NmtWorkspace.from_fields(fld, fld, b)
                     Nf_list.append(fld.Nf)
                     cls.append(w.decouple_cell(nmt.compute_coupled_cell(fld, fld)))
@@ -490,6 +492,7 @@ def generate_mocks(cat_sizes,
                 cls = []
                 # Catalog weights
                 w_data = np.ones(nsrc)
+                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
 
                 # Generate continuous map
                 mp = gen_sim(cl_true=cl_true,nside=nside, lmax_nside = lmax_nside)
@@ -500,10 +503,9 @@ def generate_mocks(cat_sizes,
                 fld = nmt.NmtFieldCatalog(pos_data, w_data, fval, lmax=lmax_nside, lonlat=True)
                 
                 # edges = np.unique(np.geomspace(lmin,3*nside,nell).astype(int))
-                b = nmt.NmtBin.from_edges(edges[:-1], edges[1:])
                 leff = b.get_effective_ells()
-                fld, map_fixed = gen_fixed_field(spin = spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=lmax,
-                                            cl_true=cl_true,nside=nside, lmax_nside = lmax_nside, return_map=True)
+                fld, map_fixed = gen_fixed_field(spin = spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=b.lmax,
+                                            cl_true=cl_true,nside=nside, lmax_nside = b.lmax, return_map=True)
                 w = nmt.NmtWorkspace.from_fields(fld, fld, b)
                 for i in range(nsims):
                     pos_data, nsrc = get_pos(nsources, mode, sel)
@@ -511,8 +513,8 @@ def generate_mocks(cat_sizes,
                     #ipix = hp.ang2pix(nside, pos_data[0], pos_data[1], lonlat=True)
     
 
-                    fld = gen_fixed_field(spin=spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=lmax,
-                                            cl_true=cl_true,nside=nside, lmax_nside = lmax_nside, mp_1=map_fixed)
+                    fld = gen_fixed_field(spin=spin, spin2=spin2, ipix_1=ipix, pos_data_1=pos_data,w_data=w_data,lmax=b.lmax,
+                                            cl_true=cl_true,nside=nside, lmax_nside = b.lmax, mp_1=map_fixed)
                     Nf_list.append(fld.Nf)
 
                     cls.append(w.decouple_cell(nmt.compute_coupled_cell(fld, fld)))
