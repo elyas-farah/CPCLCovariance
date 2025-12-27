@@ -1,0 +1,6 @@
+
+The following have been reloaded with a version change:
+  1) GCCcore/12.2.0 => GCCcore/12.3.0
+
+/var/spool/slurmd/job24154872/slurm_script: line 20: 881367 Killed                  python /home/s59efara_hpc/covariance/full_covariance_with_jax.py
+[2025-12-18T15:35:51.931] error: Detected 1 oom_kill event in StepId=24154872.batch. Some of the step tasks have been OOM Killed.

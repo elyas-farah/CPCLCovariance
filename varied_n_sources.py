@@ -37,12 +37,12 @@ ell_extern = np.arange(len(cl_extern[:,0,0]))
 
 
 nside = 256
-nell = 30
-lmin = 1
+nell = 20
+lmin = 2
 
 edges = np.unique(np.geomspace(lmin,3*nside - 1,nell).astype(int))
 
-# edges= np.arange(0, 3*nside + 1)
+# edges= np.arange(lmin, 3*nside + 1)
 
 # cls_prediction_list = []
 # cls_fixed_field_list = []
